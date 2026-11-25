@@ -1,0 +1,8 @@
+const USERS_KEY="careerflow_users", SESSION_KEY="careerflow_session";
+function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||"[]")}
+function setMessage(id,msg,ok=false){const el=document.getElementById(id);if(el){el.textContent=msg;el.className="form-message "+(ok?"success":"error")}}
+document.getElementById("signupForm")?.addEventListener("submit",e=>{e.preventDefault();const name=signupName.value.trim(),email=signupEmail.value.trim().toLowerCase(),password=signupPassword.value;const users=getUsers();if(users.some(u=>u.email===email)){setMessage("signupMessage","An account with this email already exists.");return}users.push({name,email,password});localStorage.setItem(USERS_KEY,JSON.stringify(users));localStorage.setItem(SESSION_KEY,JSON.stringify({name,email}));location.href="app.html"});
+document.getElementById("loginForm")?.addEventListener("submit",e=>{e.preventDefault();const email=loginEmail.value.trim().toLowerCase(),password=loginPassword.value;const user=getUsers().find(u=>u.email===email&&u.password===password);if(!user){setMessage("loginMessage","Incorrect email or password. Please try again.");return}localStorage.setItem(SESSION_KEY,JSON.stringify({name:user.name,email:user.email}));location.href="app.html"});
+function currentUser(){try{return JSON.parse(localStorage.getItem(SESSION_KEY)||"null")}catch{return null}}
+if(location.pathname.endsWith("app.html")&&!currentUser())location.href="login.html";
+document.getElementById("logoutBtn")?.addEventListener("click",()=>{localStorage.removeItem(SESSION_KEY);location.href="login.html"});
